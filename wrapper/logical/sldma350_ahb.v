@@ -50,24 +50,6 @@ module sldma350_ahb #(
     output wire                    DMA_ERR      // DMA slave response not OK
 );
 
-
-wire                    SYS_HRESETn;
-wire                    DMAC_ACLKen;
-
-// Q Channel Signals
-wire                    DMAC_CLK_QREQN;
-wire                    DMAC_CLK_QACCEPTN;
-wire                    DMAC_CLK_QDENY;
-wire                    DMAC_CLK_QACTIVE;
-
-// P Channel Signals
-wire                     DMAC_PREQ;
-wire  [3:0]              DMAC_PSTATE;
-wire                     DMAC_PACCEPT;
-wire                     DMAC_PDENY;
-wire [9:0]               DMAC_PACTIVE;
-wire                     DMAC_PWAKEUP;
-wire                     DMAC_PDEBUG;
 //  DMAC AXI Port
 wire                     DMAC_AWAKEUP;
 wire                     DMAC_AWVALID;
@@ -161,6 +143,8 @@ wire [SYS_DATA_W-1:0]    DMAC_STR_IN_1_TDATA;
 wire [16-1:0]            DMAC_STR_IN_1_TSTRB;
 wire                     DMAC_STR_IN_1_TLAST;
 wire                     DMAC_STR_IN_1_FLUSH;
+
+// DMAC STATUS
 wire                     DMAC_ALLCH_STOP_REQ_NONSEC;
 wire                     DMAC_ALLCH_STOP_ACK_NONSEC;
 wire                     DMAC_ALLCH_PAUSE_REQ_NONSEC;
@@ -171,13 +155,8 @@ wire [2-1:0]             DMAC_CH_STOPPED;
 wire [2-1:0]             DMAC_CH_PAUSED;
 wire [2-1:0]             DMAC_CH_PRIV;
 
-wire                     DMAC_HALT_REQ;
-wire                     DMAC_RESTART_REQ;
 wire                     DMAC_HALTED;
-wire                     DMAC_BOOT_EN;
-wire  [32-1:2]           DMAC_BOOT_ADDR;
-wire  [ 7:0]             DMAC_BOOT_MEMATTR;
-wire  [ 1:0]             DMAC_BOOT_SHAREATTR;
+
 
 // -------------------------------
 // DMA Controller Instantiation
@@ -190,15 +169,15 @@ ada_top_sldma350 u_dmac_0(
     .pclken(PCLKEN),
     // Q Channel signals
     .clk_qreqn(1'b1),
-    .clk_qacceptn(DMAC_CLK_QACCEPTN),
-    .clk_qdeny(DMAC_CLK_QDENY),
-    .clk_qactive(DMAC_CLK_QACTIVE),
+    .clk_qacceptn(),
+    .clk_qdeny(),
+    .clk_qactive(),
     // P Channel Signals
     .preq(1'b0),
     .pstate(4'b1000),
-    .paccept(DMAC_PACCEPT),
-    .pdeny(DMAC_PDENY),
-    .pactive(DMAC_PACTIVE),
+    .paccept(),
+    .pdeny(),
+    .pactive(),
 
     .pwakeup(1'b1),
     .pdebug(1'b0),
@@ -318,9 +297,9 @@ ada_top_sldma350 u_dmac_0(
     .restart_req(1'b0),
     .halted(DMAC_HALTED),
     .boot_en(1'b0),
-    .boot_addr(DMAC_BOOT_ADDR),
-    .boot_memattr(DMAC_BOOT_MEMATTR),
-    .boot_shareattr(DMAC_BOOT_SHAREATTR)
+    .boot_addr(),
+    .boot_memattr(),
+    .boot_shareattr()
 );
 
 wire    HTRANS_int;
