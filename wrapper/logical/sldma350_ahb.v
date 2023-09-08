@@ -13,7 +13,7 @@
 module sldma350_ahb #(
     parameter    SYS_ADDR_W  = 32,
     parameter    SYS_DATA_W  = 32,
-    parameter    CFG_ADDR_W  = 12,  // Configuration Port Address Width
+    parameter    CFG_ADDR_W  = 13,  // Configuration Port Address Width
     parameter    CHANNEL_NUM = 2    // Number of DMA Channels
 
     )(
@@ -42,7 +42,8 @@ module sldma350_ahb #(
     input  wire   [CFG_ADDR_W-1:0] PADDR,       // APB address
     input  wire   [SYS_DATA_W-1:0] PWDATA,      // APB write data
     output wire   [SYS_DATA_W-1:0] PRDATA,      // APB read data
-    
+    output wire                    PREADY,
+    output wire                    PSLVERR,
     // DMA Request and Status Port
     input  wire  [CHANNEL_NUM-1:0] DMA_REQ,     // DMA transfer request
     output wire  [CHANNEL_NUM-1:0] DMA_DONE,    // DMA transfer done
@@ -50,139 +51,133 @@ module sldma350_ahb #(
 );
 
 
-wire                    SYS_HRESETn,
-wire                    DMAC_PCLKen,
-wire                    DMAC_ACLKen,
+wire                    SYS_HRESETn;
+wire                    DMAC_ACLKen;
 
 // Q Channel Signals
-wire                    DMAC_CLK_QREQN,
-wire                    DMAC_CLK_QACCEPTN,
-wire                    DMAC_CLK_QDENY,
-wire                    DMAC_CLK_QACTIVE,
+wire                    DMAC_CLK_QREQN;
+wire                    DMAC_CLK_QACCEPTN;
+wire                    DMAC_CLK_QDENY;
+wire                    DMAC_CLK_QACTIVE;
 
 // P Channel Signals
-wire                     DMAC_PREQ,
-wire  [3:0]              DMAC_PSTATE,
-wire                     DMAC_PACCEPT,
-wire                     DMAC_PDENY,
-wire [9:0]               DMAC_PACTIVE,
-wire                     DMAC_PWAKEUP,
-wire                     DMAC_PDEBUG,
-wire                     DMAC_PSEL,
-wire                     DMAC_PENABLE,
-wire  [2:0]              DMAC_PPROT,
-wire                     DMAC_PWRITE,
-wire  [12:0]             DMAC_PADDR,
-wire  [31:0]             DMAC_PWDATA,
-wire  [3:0]              DMAC_PSTRB,
-wire                     DMAC_PREADY,
-wire                     DMAC_PSLVERR,
-wire [31:0]              DMAC_PRDATA,
+wire                     DMAC_PREQ;
+wire  [3:0]              DMAC_PSTATE;
+wire                     DMAC_PACCEPT;
+wire                     DMAC_PDENY;
+wire [9:0]               DMAC_PACTIVE;
+wire                     DMAC_PWAKEUP;
+wire                     DMAC_PDEBUG;
 //  DMAC AXI Port
-wire                     DMAC_AWAKEUP,
-wire                     DMAC_AWVALID,
-wire [SYS_ADDR_W-1:0]    DMAC_AWADDR,
-wire [1:0]               DMAC_AWBURST,
-wire [7:0]               DMAC_AWLEN,
-wire [2:0]               DMAC_AWSIZE,
-wire [3:0]               DMAC_AWQOS,
-wire [2:0]               DMAC_AWPROT,
-wire                     DMAC_AWREADY,
-wire [3:0]               DMAC_AWCACHE,
-wire [3:0]               DMAC_AWINNER,
-wire [1:0]               DMAC_AWDOMAIN,
+wire                     DMAC_AWAKEUP;
+wire                     DMAC_AWVALID;
+wire [SYS_ADDR_W-1:0]    DMAC_AWADDR;
+wire [1:0]               DMAC_AWBURST;
+wire [7:0]               DMAC_AWLEN;
+wire [2:0]               DMAC_AWSIZE;
+wire [3:0]               DMAC_AWQOS;
+wire [2:0]               DMAC_AWPROT;
+wire                     DMAC_AWREADY;
+wire [3:0]               DMAC_AWCACHE;
+wire [3:0]               DMAC_AWINNER;
+wire [1:0]               DMAC_AWDOMAIN;
 
-wire                     DMAC_ARVALID,
-wire [SYS_ADDR_W-1:0]    DMAC_ARADDR,
-wire [1:0]               DMAC_ARBURST,
-wire [7:0]               DMAC_ARLEN,
-wire [2:0]               DMAC_ARSIZE,
-wire [3:0]               DMAC_ARQOS,
-wire [2:0]               DMAC_ARPROT,
-wire                     DMAC_ARREADY,
-wire [3:0]               DMAC_ARCACHE,
-wire [3:0]               DMAC_ARINNER,
-wire [1:0]               DMAC_ARDOMAIN,
-wire                     DMAC_ARCMDLINK,
+wire                     DMAC_ARVALID;
+wire [SYS_ADDR_W-1:0]    DMAC_ARADDR;
+wire [1:0]               DMAC_ARBURST;
+wire [7:0]               DMAC_ARLEN;
+wire [2:0]               DMAC_ARSIZE;
+wire [3:0]               DMAC_ARQOS;
+wire [2:0]               DMAC_ARPROT;
+wire                     DMAC_ARREADY;
+wire [3:0]               DMAC_ARCACHE;
+wire [3:0]               DMAC_ARINNER;
+wire [1:0]               DMAC_ARDOMAIN;
+wire                     DMAC_ARCMDLINK;
 
-wire                     DMAC_WVALID,
-wire                     DMAC_WLAST,
-wire [16-1:0]            DMAC_WSTRB,
-wire [SYS_DATA_W-1:0]    DMAC_WDATA,
-wire                     DMAC_WREADY,
-wire                     DMAC_RVALID,
-wire                     DMAC_RLAST,
-wire  [SYS_DATA_W-1:0]   DMAC_RDATA,
-wire  [2-1:0]            DMAC_RPOISON,
-wire  [1:0]              DMAC_RRESP,
-wire                     DMAC_RREADY,
+wire                     DMAC_WVALID;
+wire                     DMAC_WLAST;
+wire [4-1:0]             DMAC_WSTRB;
+wire [SYS_DATA_W-1:0]    DMAC_WDATA;
+wire                     DMAC_WREADY;
+wire                     DMAC_RVALID;
+wire                     DMAC_RLAST;
+wire  [SYS_DATA_W-1:0]   DMAC_RDATA;
+wire  [2-1:0]            DMAC_RPOISON;
+wire  [1:0]              DMAC_RRESP;
+wire                     DMAC_RREADY;
 
-wire                     DMAC_BVALID,
-wire  [1:0]              DMAC_BRESP,
-wire                     DMAC_BREADY,
+wire                     DMAC_BVALID;
+wire  [1:0]              DMAC_BRESP;
+wire                     DMAC_BREADY;
+wire                     DMAC_BID;
+wire                     DMAC_WID;
+wire                     DMAC_RID;
+wire                     DMAC_ARID;
+wire                     DMAC_AWID;
 
 // Trigger 0 in
-wire                     DMAC_TRIG_IN_0_REQ,
-wire  [1:0]              DMAC_TRIG_IN_0_REQ_TYPE,
-wire                     DMAC_TRIG_IN_0_ACK,
-wire [1:0]               DMAC_TRIG_IN_0_ACK_TYPE,
-wire                     DMAC_TRIG_IN_1_REQ,
-wire  [1:0]              DMAC_TRIG_IN_1_REQ_TYPE,
-wire                     DMAC_TRIG_IN_1_ACK,
-wire [1:0]               DMAC_TRIG_IN_1_ACK_TYPE,
-wire                     DMAC_TRIG_OUT_0_REQ,
-wire                     DMAC_TRIG_OUT_0_ACK,
-wire                     DMAC_TRIG_OUT_1_REQ,
-wire                     DMAC_TRIG_OUT_1_ACK,
-wire [2-1:0]             DMAC_IRQ_CHANNEL,
-wire                     DMAC_IRQ_COMB_NONSEC,
+wire                     DMAC_TRIG_IN_0_REQ;
+wire  [1:0]              DMAC_TRIG_IN_0_REQ_TYPE;
+wire                     DMAC_TRIG_IN_0_ACK;
+wire [1:0]               DMAC_TRIG_IN_0_ACK_TYPE;
+wire                     DMAC_TRIG_IN_1_REQ;
+wire  [1:0]              DMAC_TRIG_IN_1_REQ_TYPE;
+wire                     DMAC_TRIG_IN_1_ACK;
+wire [1:0]               DMAC_TRIG_IN_1_ACK_TYPE;
+wire                     DMAC_TRIG_OUT_0_REQ;
+wire                     DMAC_TRIG_OUT_0_ACK;
+wire                     DMAC_TRIG_OUT_1_REQ;
+wire                     DMAC_TRIG_OUT_1_ACK;
+wire [2-1:0]             DMAC_IRQ_CHANNEL;
+wire                     DMAC_IRQ_COMB_NONSEC;
 
 //  DMAC Channel 0 AXI stream out
-wire                     DMAC_STR_OUT_0_TVALID,
-wire                     DMAC_STR_OUT_0_TREADY,
-wire [SYS_DATA_W-1:0]    DMAC_STR_OUT_0_TDATA,
-wire [16-1:0]            DMAC_STR_OUT_0_TSTRB,
-wire                     DMAC_STR_OUT_0_TLAST,
+wire                     DMAC_STR_OUT_0_TVALID;
+wire                     DMAC_STR_OUT_0_TREADY;
+wire [SYS_DATA_W-1:0]    DMAC_STR_OUT_0_TDATA;
+wire [16-1:0]            DMAC_STR_OUT_0_TSTRB;
+wire                     DMAC_STR_OUT_0_TLAST;
 
 //  DMAC Channel 0 AXI Stream in
-wire                     DMAC_STR_IN_0_TVALID,
-wire                     DMAC_STR_IN_0_TREADY,
-wire [SYS_DATA_W-1:0]    DMAC_STR_IN_0_TDATA,
-wire [16-1:0]            DMAC_STR_IN_0_TSTRB,
-wire                     DMAC_STR_IN_0_TLAST,
-wire                     DMAC_STR_IN_0_FLUSH,
+wire                     DMAC_STR_IN_0_TVALID;
+wire                     DMAC_STR_IN_0_TREADY;
+wire [SYS_DATA_W-1:0]    DMAC_STR_IN_0_TDATA;
+wire [16-1:0]            DMAC_STR_IN_0_TSTRB;
+wire                     DMAC_STR_IN_0_TLAST;
+wire                     DMAC_STR_IN_0_FLUSH;
 
 //  DMAC Channel 1 AXI Stream out
-wire                     DMAC_STR_OUT_1_TVALID,
-wire                     DMAC_STR_OUT_1_TREADY,
-wire [SYS_DATA_W-1:0]    DMAC_STR_OUT_1_TDATA,
-wire [16-1:0]            DMAC_STR_OUT_1_TSTRB,
-wire                     DMAC_STR_OUT_1_TLAST,
+wire                     DMAC_STR_OUT_1_TVALID;
+wire                     DMAC_STR_OUT_1_TREADY;
+wire [SYS_DATA_W-1:0]    DMAC_STR_OUT_1_TDATA;
+wire [16-1:0]            DMAC_STR_OUT_1_TSTRB;
+wire                     DMAC_STR_OUT_1_TLAST;
 
 //  DMAC Channel 1 AXI Stream out
-wire                     DMAC_STR_IN_1_TVALID,
-wire                     DMAC_STR_IN_1_TREADY,
-wire [SYS_DATA_W-1:0]    DMAC_STR_IN_1_TDATA,
-wire [16-1:0]            DMAC_STR_IN_1_TSTRB,
-wire                     DMAC_STR_IN_1_TLAST,
-wire                     DMAC_STR_IN_1_FLUSH,
-wire                     DMAC_ALLCH_STOP_REQ_NONSEC,
-wire                     DMAC_ALLCH_STOP_ACK_NONSEC,
-wire                     DMAC_ALLCH_PAUSE_REQ_NONSEC,
-wire                     DMAC_ALLCH_PAUSE_ACK_NONSEC,
-wire [2-1:0]             DMAC_CH_ENABLED,
-wire [2-1:0]             DMAC_CH_ERR,
-wire [2-1:0]             DMAC_CH_STOPPED,
-wire [2-1:0]             DMAC_CH_PAUSED,
-wire [2-1:0]             DMAC_CH_PRIV,
+wire                     DMAC_STR_IN_1_TVALID;
+wire                     DMAC_STR_IN_1_TREADY;
+wire [SYS_DATA_W-1:0]    DMAC_STR_IN_1_TDATA;
+wire [16-1:0]            DMAC_STR_IN_1_TSTRB;
+wire                     DMAC_STR_IN_1_TLAST;
+wire                     DMAC_STR_IN_1_FLUSH;
+wire                     DMAC_ALLCH_STOP_REQ_NONSEC;
+wire                     DMAC_ALLCH_STOP_ACK_NONSEC;
+wire                     DMAC_ALLCH_PAUSE_REQ_NONSEC;
+wire                     DMAC_ALLCH_PAUSE_ACK_NONSEC;
+wire [2-1:0]             DMAC_CH_ENABLED;
+wire [2-1:0]             DMAC_CH_ERR;
+wire [2-1:0]             DMAC_CH_STOPPED;
+wire [2-1:0]             DMAC_CH_PAUSED;
+wire [2-1:0]             DMAC_CH_PRIV;
 
-wire                     DMAC_HALT_REQ,
-wire                     DMAC_RESTART_REQ,
-wire                     DMAC_HALTED,
-wire                     DMAC_BOOT_EN,
-wire  [32-1:2]           DMAC_BOOT_ADDR,
-wire  [ 7:0]             DMAC_BOOT_MEMATTR,
-wire  [ 1:0]             DMAC_BOOT_SHAREATTR
+wire                     DMAC_HALT_REQ;
+wire                     DMAC_RESTART_REQ;
+wire                     DMAC_HALTED;
+wire                     DMAC_BOOT_EN;
+wire  [32-1:2]           DMAC_BOOT_ADDR;
+wire  [ 7:0]             DMAC_BOOT_MEMATTR;
+wire  [ 1:0]             DMAC_BOOT_SHAREATTR;
 
 // -------------------------------
 // DMA Controller Instantiation
@@ -191,38 +186,38 @@ ada_top_sldma350 u_dmac_0(
     // Clock and Reset signals
     .clk(HCLK),
     .resetn(HRESETn),
-    .aclken_m0(DMAC_ACLKen),
+    .aclken_m0(1'b1),
     .pclken(PCLKEN),
     // Q Channel signals
-    .clk_qreqn(DMAC_CLK_QREQN),
+    .clk_qreqn(1'b1),
     .clk_qacceptn(DMAC_CLK_QACCEPTN),
     .clk_qdeny(DMAC_CLK_QDENY),
     .clk_qactive(DMAC_CLK_QACTIVE),
     // P Channel Signals
-    .preq(DMAC_PREQ),
-    .pstate(DMAC_PSTATE),
+    .preq(1'b0),
+    .pstate(4'b1000),
     .paccept(DMAC_PACCEPT),
     .pdeny(DMAC_PDENY),
     .pactive(DMAC_PACTIVE),
 
-    .pwakeup(DMAC_PWAKEUP),
-    .pdebug(DMAC_PDEBUG),
+    .pwakeup(1'b1),
+    .pdebug(1'b0),
     .psel(PSEL),
     .penable(PEN),
-    .pprot(DMAC_PPROT),
+    .pprot(3'b100),
     .pwrite(PWRITE),
     .paddr(PADDR),
     .pwdata(PWDATA),
-    .pstrb(DMAC_PSTRB),
-    .pready(DMAC_PREADY),
-    .pslverr(DMAC_PSLVERR),
+    .pstrb(4'b1111),
+    .pready(PREADY),
+    .pslverr(PSLVERR),
     .prdata(PRDATA),
     // AXI Write Channel Signals
     .awakeup_m0(DMAC_AWAKEUP),
     .awvalid_m0(DMAC_AWVALID),
     .awaddr_m0(DMAC_AWADDR),
     .awburst_m0(DMAC_AWBURST),
-    .awid_m0(),
+    .awid_m0(DMAC_AWID),
     .awlen_m0(DMAC_AWLEN),
     .awsize_m0(DMAC_AWSIZE),
     .awqos_m0(DMAC_AWQOS),
@@ -235,7 +230,7 @@ ada_top_sldma350 u_dmac_0(
     .arvalid_m0(DMAC_ARVALID),
     .araddr_m0(DMAC_ARADDR),
     .arburst_m0(DMAC_ARBURST),
-    .arid_m0(),
+    .arid_m0(DMAC_ARID),
     .arlen_m0(DMAC_ARLEN),
     .arsize_m0(DMAC_ARSIZE),
     .arqos_m0(DMAC_ARQOS),
@@ -253,15 +248,15 @@ ada_top_sldma350 u_dmac_0(
     .wready_m0(DMAC_WREADY),
     // AXI Read Data Signals
     .rvalid_m0(DMAC_RVALID),
-    .rid_m0(),
+    .rid_m0(DMAC_RID),
     .rlast_m0(DMAC_RLAST),
     .rdata_m0(DMAC_RDATA),
-    .rpoison_m0(DMAC_RPOISON),
+    .rpoison_m0(1'b0),
     .rresp_m0(DMAC_RRESP),
     .rready_m0(DMAC_RREADY),
     // AXI Write response signals
     .bvalid_m0(DMAC_BVALID),
-    .bid_m0(),
+    .bid_m0(DMAC_BID),
     .bresp_m0(DMAC_BRESP),
     .bready_m0(DMAC_BREADY),
     // Trigger 0 in
@@ -310,114 +305,130 @@ ada_top_sldma350 u_dmac_0(
     .str_in_1_tlast(DMAC_STR_IN_1_TLAST),
     .str_in_1_flush(DMAC_STR_IN_1_FLUSH),
 
-    .allch_stop_req_nonsec(DMAC_ALLCH_STOP_REQ_NONSEC),
+    .allch_stop_req_nonsec(1'b0),
     .allch_stop_ack_nonsec(DMAC_ALLCH_STOP_ACK_NONSEC),
-    .allch_pause_req_nonsec(DMAC_ALLCH_PAUSE_REQ_NONSEC),
+    .allch_pause_req_nonsec(1'b0),
     .allch_pause_ack_nonsec(DMAC_ALLCH_PAUSE_ACK_NONSEC),
     .ch_enabled(DMAC_CH_ENABLED),
     .ch_err(DMAC_CH_ERR),
     .ch_stopped(DMAC_CH_STOPPED),
     .ch_paused(DMAC_CH_PAUSED),
     .ch_priv(DMAC_CH_PRIV),
-    .halt_req(DMAC_HALT_REQ),
-    .restart_req(DMAC_RESTART_REQ),
+    .halt_req(1'b0),
+    .restart_req(1'b0),
     .halted(DMAC_HALTED),
-    .boot_en(DMAC_BOOT_EN),
+    .boot_en(1'b0),
     .boot_addr(DMAC_BOOT_ADDR),
     .boot_memattr(DMAC_BOOT_MEMATTR),
     .boot_shareattr(DMAC_BOOT_SHAREATTR)
 );
 
-xhb400 #(.DATA_WIDTH(SYS_DATA_W))
+wire    HTRANS_int;
+wire    HNONSEC_int;
+
+assign HTRANS = HNONSEC_int ? 2'b10 : HTRANS_int; 
+
+xhb500_axi_to_ahb_bridge_sldma350 u_xhb
 (
     //-----------------------------------------------------------------------------
     // Clock and Reset
     //-----------------------------------------------------------------------------
 
-    .CLK(HCLK),
-    .nSYSRESET(HRESETn),
+    .clk(HCLK),
+    .resetn(HRESETn),
+    .clk_qactive(),
+    .clk_qreqn(1'b1),
+    .clk_qacceptn(),
+    .clk_qdeny(),
+    .pwr_qactive(),
+    .pwr_qreqn(1'b1),
+    .pwr_qacceptn(),
+    .pwr_qdeny(),
     //-----------------------------------------------------------------------------
     // AXI Master Interface
     //-----------------------------------------------------------------------------
 
     // Write Address Channel signals
-    .AWADDR(DMAC_AWADDR),
-    .AWBURST(DMAC_AWBURST),
-    .AWID(),
-    .AWLEN(DMAC_AWLEN),
-    .AWSIZE(DMAC_AWSIZE),
-    .AWLOCK(),
-    .AWPROT(DMAC_AWPROT),
-    .AWCACHE(DMAC_AWCACHE),
-    .AWUSER(),
-    .AWSPARSE(),
-    .AWVALID(DMAC_AWVALID),
-    .AWREADY(DMAC_AWREADY),
+    .awvalid(DMAC_AWVALID),
+    .awready(DMAC_AWREADY),
+    .awaddr(DMAC_AWADDR),
+    .awburst(DMAC_AWBURST),
+    .awid(DMAC_AWID),
+    .awlen(DMAC_AWLEN),
+    .awsize(DMAC_AWSIZE),
+    .awlock(1'b0),
+    .awprot(DMAC_AWPROT),
+    .awcache(DMAC_AWCACHE),
   
 // Read Address Channel signals  
-    .ARADDR(DMAC_ARADDR),
-    .ARBURST(DMAC_ARBURST),
-    .ARID(),
-    .ARLEN(DMAC_ARLEN),
-    .ARSIZE(DMAC_ARSIZE),
-    .ARLOCK(), 
-    .ARPROT(DMAC_ARPROT),
-    .ARCACHE(DMAC_ARCACHE),
-    .ARUSER(),
-    .ARVALID(DMAC_ARVALID),
-    .ARREADY(DMAC_ARREADY),
+    .arvalid(DMAC_ARVALID),
+    .arready(DMAC_ARREADY),
+    .araddr(DMAC_ARADDR),
+    .arburst(DMAC_ARBURST),
+    .arid(DMAC_ARID),
+    .arlen(DMAC_ARLEN),
+    .arsize(DMAC_ARSIZE),
+    .arlock(1'b0), 
+    .arprot(DMAC_ARPROT),
+    .arcache(DMAC_ARCACHE),
   
 // Write Data Channel signals   
-    .WLAST(DMAC_WLAST),
-    .WSTRB(DMAC_WSTRB),
-    .WDATA(DMAC_WDATA),
-    .WUSER(),
-    .WVALID(DMAC_WVALID),
-    .WREADY(DMAC_WREADY),
+    .wvalid(DMAC_WVALID),
+    .wready(DMAC_WREADY),
+    .wlast(DMAC_WLAST),
+    .wstrb(DMAC_WSTRB),
+    .wdata(DMAC_WDATA),
   
 // Read Data Channel signals 
-    .RREADY(DMAC_RREADY),   
-    .RVALID(DMAC_RVALID),
-    .RID(),
-    .RLAST(DMAC_RLAST),
-    .RDATA(DMAC_RDATA),
-    .RUSER(),
-    .RRESP(DMAC_RRESP),
+    .rvalid(DMAC_RVALID),
+    .rready(DMAC_RREADY),   
+    .rid(DMAC_RID),
+    .rlast(DMAC_RLAST),
+    .rdata(DMAC_RDATA),
+    .rresp(DMAC_RRESP),
   
 // Write Response Channel signals 
-    .BREADY(DMAC_BREADY),   
-    .BVALID(DMAC_BVALID),
-    .BID(),
-    .BRESP(DMAC_BRESP),
+    .bready(DMAC_BREADY),   
+    .bvalid(DMAC_BVALID),
+    .bid(DMAC_BID),
+    .bresp(DMAC_BRESP),
   
-  
+    .ardomain(DMAC_ARDOMAIN),
+    .awdomain(DMAC_AWDOMAIN),
+    .awakeup(DMAC_AWAKEUP),
+    .awnsaid(4'b0000),
+    .arnsaid(4'b0000),
+    .awqos(DMAC_AWQOS),
+    .arqos(DMAC_ARQOS),
+    .awregion(4'b0000),
+    .arregion(4'b0000),
 //-----------------------------------------------------------------------------
 // AHB-Lite Slave Interface
 //-----------------------------------------------------------------------------
 
 // AHB-Lite Master signals
-    .HTRANS(HTRANS),
-    .HBURST(HBURST),
-    .HADDR(HADDR),
-    .HWRITE(HWRITE),
-    .HSIZE(HSIZE),
-    .HWDATA(HWDATA),
-    .HPROT(HPROT),
-    .HMASTLOCK(HMASTLOCK),
+    .hnonsec(HNONSEC_int),
+    .haddr(HADDR),
+    .htrans(HTRANS_int),
+    .hsize(HSIZE),
+    .hwrite(HWRITE),
+    .hprot(HPROT),
+    .hburst(HBURST),
+    .hmastlock(HMASTLOCK),
+    .hwdata(HWDATA),
+    .hexcl(),
   
 // AHB-Lite Slave Response signals  
-    .HREADY(HREADY),
-    .HRDATA(HRDATA),
-    .HRESP(HRESP),
-  
-// Non-standard Exclusive Access signals   
-    .EXREQ,
-    .EXRESP,
+    .hrdata(HRDATA),
+    .hready(HREADY),
+    .hresp(HRESP),
+    .hexokay(1'b0),
 
 // Sideband AHB USER signals
-    .HAUSER,
-    .HWUSER,
-    .HRUSER
+    .hwstrb(),
+    .hqos(),
+    .hregion(),
+    .hnsaid()
 );
 
 endmodule

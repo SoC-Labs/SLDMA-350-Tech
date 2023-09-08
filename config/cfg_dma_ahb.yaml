@@ -87,8 +87,8 @@ CH_STREAM_MASK: 0x3
 #
 #     Valid values:
 #         [1,2,4,8,16,32,64]
-CH_0_FIFO_DEPTH: 2
-CH_1_FIFO_DEPTH: 2
+CH_0_FIFO_DEPTH: 32
+CH_1_FIFO_DEPTH: 32
 
 #
 # CH_EXT_FEAT_MASK: A bitmask for enabling the extended feature set for each channel.

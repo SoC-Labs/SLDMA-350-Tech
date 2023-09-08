@@ -18,6 +18,27 @@
 // =============    DMA-350 search path    =============
 +incdir+$(SOCLABS_SLDMA350_TECH_DIR)/src/logical/
 
+$(SOCLABS_SLDMA350_TECH_DIR)/src/logical/shared/verilog/ada_gen_regmap_sldma350_pkg.sv
+$(SOCLABS_SLDMA350_TECH_DIR)/src/logical/shared/verilog/ada_apb_regmap_conv_sldma350.sv
+$(SOCLABS_SLDMA350_TECH_DIR)/src/logical/shared/verilog/ada_reg_field_ro_ro_sldma350.sv
+$(SOCLABS_SLDMA350_TECH_DIR)/src/logical/shared/verilog/ada_reg_field_rw_ro_sldma350.sv
+$(SOCLABS_SLDMA350_TECH_DIR)/src/logical/shared/verilog/ada_reg_field_rw_w1c_sldma350.sv
+$(SOCLABS_SLDMA350_TECH_DIR)/src/logical/shared/verilog/ada_reg_field_rw_w1s_sldma350.sv
+$(SOCLABS_SLDMA350_TECH_DIR)/src/logical/shared/verilog/ada_reg_field_rw_rw_sldma350.sv
+$(SOCLABS_SLDMA350_TECH_DIR)/src/logical/shared/verilog/ada_gen_coreif_dmach_sldma350_pkg.sv
+$(SOCLABS_SLDMA350_TECH_DIR)/src/logical/shared/verilog/ada_gen_addrmap_dmach_sldma350.sv
+$(SOCLABS_SLDMA350_TECH_DIR)/src/logical/shared/verilog/ada_interface_sldma350_pkg.sv
+$(SOCLABS_SLDMA350_TECH_DIR)/src/logical/shared/verilog/ada_flop_en/verilog/ada_flop_en.sv
+$(SOCLABS_SLDMA350_TECH_DIR)/src/logical/shared/verilog/ada_or_tree/verilog/ada_or_tree.sv
+$(SOCLABS_SLDMA350_TECH_DIR)/src/logical/shared/verilog/ada_gen_regif_dmainfo_sldma350_pkg.sv
+$(SOCLABS_SLDMA350_TECH_DIR)/src/logical/models/cells/generic/ada_arm_flop.sv
+$(SOCLABS_SLDMA350_TECH_DIR)/src/logical/models/cells/generic/ada_arm_sync.sv
+$(SOCLABS_SLDMA350_TECH_DIR)/src/logical/models/cells/generic/ada_arm_mux2.sv
+$(SOCLABS_SLDMA350_TECH_DIR)/src/logical/models/cells/generic/ada_arm_or.sv
+$(SOCLABS_SLDMA350_TECH_DIR)/src/logical/models/cells/generic/ada_arm_idbit_v1.sv
+$(SOCLABS_SLDMA350_TECH_DIR)/src/logical/shared/verilog/ada_ecorevnum.sv
+$(SOCLABS_SLDMA350_TECH_DIR)/src/logical/ada_top_sldma350/verilog/ada_top_sldma350.sv
+
 $(SOCLABS_SLDMA350_TECH_DIR)/src/logical/ada_biu_sldma350/verilog/ada_biu_sldma350.sv
 $(SOCLABS_SLDMA350_TECH_DIR)/src/logical/ada_biu_sldma350/verilog/ada_biu_read_switch_sldma350.sv
 $(SOCLABS_SLDMA350_TECH_DIR)/src/logical/ada_biu_sldma350/verilog/ada_biu_read_switch_wrapper_sldma350.sv
@@ -101,26 +122,5 @@ $(SOCLABS_SLDMA350_TECH_DIR)/src/logical/ada_ctrl_sldma350/verilog/ada_ctrl_trig
 $(SOCLABS_SLDMA350_TECH_DIR)/src/logical/ada_ctrl_sldma350/verilog/ada_ctrl_sldma350.sv
 
 $(SOCLABS_SLDMA350_TECH_DIR)/src/logical/ada_qctrl_sldma350/verilog/ada_qctrl_sldma350.sv
-
-$(SOCLABS_SLDMA350_TECH_DIR)/src/logical/shared/verilog/ada_gen_regmap_sldma350_pkg.sv
-$(SOCLABS_SLDMA350_TECH_DIR)/src/logical/shared/verilog/ada_apb_regmap_conv_sldma350.sv
-$(SOCLABS_SLDMA350_TECH_DIR)/src/logical/shared/verilog/ada_reg_field_ro_ro_sldma350.sv
-$(SOCLABS_SLDMA350_TECH_DIR)/src/logical/shared/verilog/ada_reg_field_rw_ro_sldma350.sv
-$(SOCLABS_SLDMA350_TECH_DIR)/src/logical/shared/verilog/ada_reg_field_rw_w1c_sldma350.sv
-$(SOCLABS_SLDMA350_TECH_DIR)/src/logical/shared/verilog/ada_reg_field_rw_w1s_sldma350.sv
-$(SOCLABS_SLDMA350_TECH_DIR)/src/logical/shared/verilog/ada_reg_field_rw_rw_sldma350.sv
-$(SOCLABS_SLDMA350_TECH_DIR)/src/logical/shared/verilog/ada_gen_coreif_dmach_sldma350_pkg.sv
-$(SOCLABS_SLDMA350_TECH_DIR)/src/logical/shared/verilog/ada_gen_addrmap_dmach_sldma350.sv
-$(SOCLABS_SLDMA350_TECH_DIR)/src/logical/shared/verilog/ada_interface_sldma350_pkg.sv
-$(SOCLABS_SLDMA350_TECH_DIR)/src/logical/shared/verilog/ada_flop_en/verilog/ada_flop_en.sv
-$(SOCLABS_SLDMA350_TECH_DIR)/src/logical/shared/verilog/ada_or_tree/verilog/ada_or_tree.sv
-$(SOCLABS_SLDMA350_TECH_DIR)/src/logical/shared/verilog/ada_gen_regif_dmainfo_sldma350_pkg.sv
-$(SOCLABS_SLDMA350_TECH_DIR)/src/logical/models/cells/generic/ada_arm_flop.sv
-$(SOCLABS_SLDMA350_TECH_DIR)/src/logical/models/cells/generic/ada_arm_sync.sv
-$(SOCLABS_SLDMA350_TECH_DIR)/src/logical/models/cells/generic/ada_arm_mux2.sv
-$(SOCLABS_SLDMA350_TECH_DIR)/src/logical/models/cells/generic/ada_arm_or.sv
-$(SOCLABS_SLDMA350_TECH_DIR)/src/logical/models/cells/generic/ada_arm_idbit_v1.sv
-$(SOCLABS_SLDMA350_TECH_DIR)/src/logical/shared/verilog/ada_ecorevnum.sv
-$(SOCLABS_SLDMA350_TECH_DIR)/src/logical/ada_top_sldma350/verilog/ada_top_sldma350.sv
 
 $(SOCLABS_SLDMA350_TECH_DIR)/src/logical/ada_trigmtx_sldma350/verilog/ada_trigmtx_sldma350.sv
