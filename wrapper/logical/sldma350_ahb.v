@@ -93,7 +93,6 @@ module sldma350_ahb #(
     output wire  [CHANNEL_NUM-1:0] DMA_DONE,    // DMA transfer done
     output wire                    DMA_ERR      // DMA slave response not OK
 );
-
 //  DMAC AXI Port
 wire                     DMAC_AWAKEUP;
 wire                     DMAC_AWVALID;
@@ -219,6 +218,7 @@ wire [2-1:0]             DMAC_CH_PRIV;
 
 wire                     DMAC_HALTED;
 
+assign DMA_ERR = |DMAC_CH_ERR;
 
 // -------------------------------
 // DMA Controller Instantiation
@@ -365,7 +365,7 @@ ada_top_sldma350 u_dmac_0(
     .trig_out_1_req(DMAC_TRIG_OUT_1_REQ),
     .trig_out_1_ack(DMAC_TRIG_OUT_1_ACK),
     // Interrupt Signals
-    .irq_channel(DMAC_IRQ_CHANNEL),
+    .irq_channel(DMA_DONE),
     .irq_comb_nonsec(DMAC_IRQ_COMB_NONSEC),
     // AXI Stream 0 out
     .str_out_0_tvalid(DMAC_STR_OUT_0_TVALID),
