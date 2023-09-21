@@ -15,7 +15,7 @@
 // ============= Verilog library extensions ===========
 +libext+.v+.vlib
 
--f $(SOCLABS_SLDMA350_TECH_DIR)/flist/dma350_ip.flist
+-f $(SOCLABS_SLDMA350_TECH_DIR)/flist/dma350_ahb_ip.flist
 
 $(SOCLABS_SLDMA350_TECH_DIR)/src/logical/models/cells/generic/xhb500_or.sv
 $(SOCLABS_SLDMA350_TECH_DIR)/src/logical/models/cells/generic/xhb500_xor.sv
@@ -38,4 +38,4 @@ $(SOCLABS_SLDMA350_TECH_DIR)/src/logical/xhb500_axi_to_ahb_bridge_sldma350/veril
 
 
 $(SOCLABS_SLDMA350_TECH_DIR)/wrapper/logical/sldma350_ahb.v
-
+$(SOCLABS_SLDMA350_TECH_DIR)/wrapper/logical/sldma350_trig_converter.v

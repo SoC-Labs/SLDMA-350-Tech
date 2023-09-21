@@ -148,7 +148,7 @@ TRIG_OUT_SYNC_EN_MASK: 0x0
 #
 #     Valid values:
 #         [0,1]
-AXI5_M1_PRESENT: 0
+AXI5_M1_PRESENT: 1
 
 #
 # SECEXT_PRESENT: Enables TrustZone security support.
@@ -157,10 +157,9 @@ AXI5_M1_PRESENT: 0
 #         [0,1]
 SECEXT_PRESENT: 0
 
-
 #
 # AXI5_M1_ADDR_MAP: Select AXI M1 master.
 #
 #     Valid values:
 #         relative path to logical
-AXI5_M1_ADDR_MAP: models/modules/generic/address_map_m1_example1.sv
+AXI5_M1_ADDR_MAP: models/modules/generic/address_map_m1_nanosoc.sv
