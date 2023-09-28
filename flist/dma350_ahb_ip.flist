@@ -17,6 +17,7 @@
 
 // =============    DMA-350 search path    =============
 +incdir+$(SOCLABS_SLDMA350_TECH_DIR)/src/logical/
++incdir+$(SOCLABS_SLDMA350_TECH_DIR)/src/logical/shared/verilog/
 
 $(SOCLABS_SLDMA350_TECH_DIR)/src/logical/shared/verilog/ada_gen_regmap_sldma350_pkg.sv
 $(SOCLABS_SLDMA350_TECH_DIR)/src/logical/shared/verilog/ada_apb_regmap_conv_sldma350.sv
