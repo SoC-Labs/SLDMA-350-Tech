@@ -23,7 +23,7 @@ module sldma350_trig_converter (
     output wire         DMAC_DMA_DONE
 );
 
- parameter IDLE  = 2'b00,START_REQ = 2'b01,ERROR = 2'b10;
+ parameter IDLE  = 2'b00,START_REQ = 2'b01,ERROR = 2'b10,END_REQ = 2'b11;
 
 reg [1:0]  state;
 reg        dma_err;
@@ -37,46 +37,30 @@ assign DMAC_DMA_REQ_ERR = dma_err;
 assign trig_in_req_type = 2'b10;
 assign DMAC_DMA_DONE = out_ack;
 
-reg         req_0;
-reg         req_1;
-reg         DMAC_DMA_REQ_EDGE;
-
-always @(posedge clk) begin
-    req_0<=DMAC_DMA_REQ;
-    req_1<=req_0;
-    if (req_0&~req_1) begin
-        DMAC_DMA_REQ_EDGE<=1'b1;
-    end else begin
-        DMAC_DMA_REQ_EDGE<=1'b0;
-    end
-end
-
-always @(negedge resetn or posedge clk) begin
+always @(posedge clk or negedge resetn) begin
     if(~resetn) begin
         state <= IDLE;
         dma_err<= 1'b0;
         out_ack <= 1'b0;
-        req_0 <= 1'b0;
-        req_1 <= 1'b0;
-        DMAC_DMA_REQ_EDGE <= 1'b0;
     end else begin
         state <= next_state;
-    end
-    if (req_err) begin
+        if (req_err) begin
         dma_err <= 1'b1;
+        end
+        if (trig_out_req) begin
+            out_ack <= 1'b1;
+        end else begin
+            out_ack <= 1'b0;
+        end
     end
-    if (trig_out_req) begin
-        out_ack <= 1'b1;
-    end else begin
-        out_ack <= 1'b0;
-    end
+    
 end
 
 always @* begin
 case(state)
     IDLE: begin
         trig_req = 1'b0;
-        if (DMAC_DMA_REQ_EDGE & ~trig_in_ack) begin
+        if (DMAC_DMA_REQ & ~trig_in_ack) begin
             req_err = 1'b0;
             next_state = START_REQ;
         end
@@ -95,6 +79,13 @@ case(state)
     ERROR: begin
         req_err = 1'b1;
         next_state = IDLE;
+    end
+    END_REQ: begin
+        trig_req = 1'b0;
+        req_err = 1'b0;
+        if (~DMAC_DMA_REQ) begin
+            next_state = IDLE;
+        end
     end
     default : next_state = IDLE;
 endcase
