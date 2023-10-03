@@ -220,6 +220,13 @@ wire                     DMAC_HALTED;
 
 assign DMA_ERR = |DMAC_CH_ERR;
 
+// AHB conversion WIRES
+wire [6:0]      HPROT_0_int;
+wire [6:0]      HPROT_1_int;
+
+assign HPROT_0 = HPROT_0_int[3:0];
+assign HPROT_1 = HPROT_1_int[3:0];
+
 // -------------------------------
 // DMA Controller Instantiation
 // -------------------------------
@@ -496,7 +503,7 @@ xhb500_axi_to_ahb_bridge_sldma350 u_xhb_0
     .htrans(HTRANS_0),
     .hsize(HSIZE_0),
     .hwrite(HWRITE_0),
-    .hprot(HPROT_0),
+    .hprot(HPROT_0_int),
     .hburst(HBURST_0),
     .hmastlock(HMASTLOCK_0),
     .hwdata(HWDATA_0),
@@ -599,7 +606,7 @@ xhb500_axi_to_ahb_bridge_sldma350 u_xhb_1
     .htrans(HTRANS_1),
     .hsize(HSIZE_1),
     .hwrite(HWRITE_1),
-    .hprot(HPROT_1),
+    .hprot(HPROT_1_int),
     .hburst(HBURST_1),
     .hmastlock(HMASTLOCK_1),
     .hwdata(HWDATA_1),
