@@ -16,18 +16,14 @@ module sldma350_trig_converter (
     output wire [1:0]   trig_in_req_type,
     input  wire         trig_in_ack,
     input  wire [1:0]   trig_in_ack_type,
-    input  wire         trig_out_req,
-    output wire         trig_out_ack,
     input  wire         DMAC_DMA_REQ,
-    output wire         DMAC_DMA_REQ_ERR,
-    output wire         DMAC_DMA_DONE
+    output wire         DMAC_DMA_REQ_ERR
 );
 
  parameter IDLE  = 2'b00,START_REQ = 2'b01,ERROR = 2'b10,END_REQ = 2'b11;
 
 reg [1:0]  state;
 reg        dma_err;
-reg        out_ack;
 reg        req_err;
 reg [1:0]  next_state;
 reg        trig_req;
@@ -35,22 +31,15 @@ reg        trig_req;
 assign trig_in_req = trig_req;
 assign DMAC_DMA_REQ_ERR = dma_err;
 assign trig_in_req_type = 2'b10;
-assign DMAC_DMA_DONE = out_ack;
 
 always @(posedge clk or negedge resetn) begin
     if(~resetn) begin
         state <= IDLE;
         dma_err<= 1'b0;
-        out_ack <= 1'b0;
     end else begin
         state <= next_state;
         if (req_err) begin
         dma_err <= 1'b1;
-        end
-        if (trig_out_req) begin
-            out_ack <= 1'b1;
-        end else begin
-            out_ack <= 1'b0;
         end
     end
     

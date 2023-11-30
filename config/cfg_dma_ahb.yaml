@@ -55,7 +55,7 @@ CHID_WIDTH: 0
 #
 #     Valid values:
 #         1-32
-GPO_WIDTH: 1
+GPO_WIDTH: 0
 
 #
 # CH_GPO_MASK: A bitmask for enabling the GPO port for each channel. The width of the
@@ -118,7 +118,7 @@ NUM_TRIGGER_IN: 2
 #
 #     Valid values:
 #         0-32
-NUM_TRIGGER_OUT: 2
+NUM_TRIGGER_OUT: 0
 
 #
 # TRIG_IN_SYNC_EN_MASK: A bitmask for enabling the synchronizers on the trigger in

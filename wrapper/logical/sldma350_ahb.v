@@ -8,7 +8,7 @@
 //
 // Copyright 2021-3, SoC Labs (www.soclabs.org)
 //-----------------------------------------------------------------------------
-
+`include "gen_defines.v"
 
 module sldma350_ahb #(
     parameter    SYS_ADDR_W  = 32,
@@ -57,7 +57,7 @@ module sldma350_ahb #(
     output wire   [SYS_DATA_W-1:0]  PRDATA,      // APB read data
     output wire                     PREADY,
     output wire                     PSLVERR,
-
+`ifdef DMA350_STREAM_2
     //  DMAC Channel 0 AXI stream out
     output wire                     DMAC_STR_OUT_0_TVALID,
     input  wire                     DMAC_STR_OUT_0_TREADY,
@@ -87,7 +87,7 @@ module sldma350_ahb #(
     input  wire [4-1:0]             DMAC_STR_IN_1_TSTRB,
     input  wire                     DMAC_STR_IN_1_TLAST,
     output wire                     DMAC_STR_IN_1_FLUSH,
-
+`endif
     // DMA Request and Status Port
     input  wire  [CHANNEL_NUM-1:0] DMA_REQ,     // DMA transfer request
     output wire  [CHANNEL_NUM-1:0] DMA_DONE,    // DMA transfer done
@@ -198,10 +198,6 @@ wire                     DMAC_TRIG_IN_1_REQ;
 wire  [1:0]              DMAC_TRIG_IN_1_REQ_TYPE;
 wire                     DMAC_TRIG_IN_1_ACK;
 wire [1:0]               DMAC_TRIG_IN_1_ACK_TYPE;
-wire                     DMAC_TRIG_OUT_0_REQ;
-wire                     DMAC_TRIG_OUT_0_ACK;
-wire                     DMAC_TRIG_OUT_1_REQ;
-wire                     DMAC_TRIG_OUT_1_ACK;
 wire [2-1:0]             DMAC_IRQ_CHANNEL;
 wire                     DMAC_IRQ_COMB_NONSEC;
 
@@ -365,15 +361,10 @@ ada_top_sldma350 u_dmac_0(
     .trig_in_1_req_type(DMAC_TRIG_IN_1_REQ_TYPE),
     .trig_in_1_ack(DMAC_TRIG_IN_1_ACK),
     .trig_in_1_ack_type(DMAC_TRIG_IN_1_ACK_TYPE),
-    // Trigger 0 out
-    .trig_out_0_req(DMAC_TRIG_OUT_0_REQ),
-    .trig_out_0_ack(DMAC_TRIG_OUT_0_ACK),
-    // Trigger 1 out
-    .trig_out_1_req(DMAC_TRIG_OUT_1_REQ),
-    .trig_out_1_ack(DMAC_TRIG_OUT_1_ACK),
     // Interrupt Signals
     .irq_channel(DMA_DONE),
     .irq_comb_nonsec(DMAC_IRQ_COMB_NONSEC),
+`ifdef DMA350_STREAM_2
     // AXI Stream 0 out
     .str_out_0_tvalid(DMAC_STR_OUT_0_TVALID),
     .str_out_0_tready(DMAC_STR_OUT_0_TREADY),
@@ -400,6 +391,7 @@ ada_top_sldma350 u_dmac_0(
     .str_in_1_tstrb(DMAC_STR_IN_1_TSTRB),
     .str_in_1_tlast(DMAC_STR_IN_1_TLAST),
     .str_in_1_flush(DMAC_STR_IN_1_FLUSH),
+`endif
 
     .allch_stop_req_nonsec(1'b0),
     .allch_stop_ack_nonsec(DMAC_ALLCH_STOP_ACK_NONSEC),
@@ -635,11 +627,8 @@ sldma350_trig_converter u_trig_conv_0 (
     .trig_in_req_type(DMAC_TRIG_IN_0_REQ_TYPE),
     .trig_in_ack(DMAC_TRIG_IN_0_ACK),
     .trig_in_ack_type(DMAC_TRIG_IN_0_ACK_TYPE),
-    .trig_out_req(DMAC_TRIG_OUT_0_REQ),
-    .trig_out_ack(DMAC_TRIG_OUT_0_ACK),
     .DMAC_DMA_REQ(DMA_REQ[0]),
-    .DMAC_DMA_REQ_ERR(),
-    .DMAC_DMA_DONE()
+    .DMAC_DMA_REQ_ERR()
 );
 
 sldma350_trig_converter u_trig_conv_1 (
@@ -649,11 +638,8 @@ sldma350_trig_converter u_trig_conv_1 (
     .trig_in_req_type(DMAC_TRIG_IN_1_REQ_TYPE),
     .trig_in_ack(DMAC_TRIG_IN_1_ACK),
     .trig_in_ack_type(DMAC_TRIG_IN_1_ACK_TYPE),
-    .trig_out_req(DMAC_TRIG_OUT_1_REQ),
-    .trig_out_ack(DMAC_TRIG_OUT_1_ACK),
     .DMAC_DMA_REQ(DMA_REQ[1]),
-    .DMAC_DMA_REQ_ERR(),
-    .DMAC_DMA_DONE()
+    .DMAC_DMA_REQ_ERR()
 );
 
 endmodule
