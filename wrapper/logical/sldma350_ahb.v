@@ -88,6 +88,23 @@ module sldma350_ahb #(
     input  wire                     DMAC_STR_IN_1_TLAST,
     output wire                     DMAC_STR_IN_1_FLUSH,
 `endif
+`ifdef DMA350_STREAM_3
+//  DMAC Channel 1 AXI Stream out
+    output wire                     DMAC_STR_OUT_2_TVALID,
+    input  wire                     DMAC_STR_OUT_2_TREADY,
+    output wire [SYS_DATA_W-1:0]    DMAC_STR_OUT_2_TDATA,
+    output wire [4-1:0]             DMAC_STR_OUT_2_TSTRB,
+    output wire                     DMAC_STR_OUT_2_TLAST,
+
+    //  DMAC Channel 1 AXI Stream out
+    input  wire                     DMAC_STR_IN_2_TVALID,
+    output wire                     DMAC_STR_IN_2_TREADY,
+    input  wire [SYS_DATA_W-1:0]    DMAC_STR_IN_2_TDATA,
+    input  wire [4-1:0]             DMAC_STR_IN_2_TSTRB,
+    input  wire                     DMAC_STR_IN_2_TLAST,
+    output wire                     DMAC_STR_IN_2_FLUSH,
+`endif
+
     // DMA Request and Status Port
     input  wire  [CHANNEL_NUM-1:0] DMA_REQ,     // DMA transfer request
     output wire  [CHANNEL_NUM-1:0] DMA_DONE,    // DMA transfer done
@@ -392,7 +409,21 @@ ada_top_sldma350 u_dmac_0(
     .str_in_1_tlast(DMAC_STR_IN_1_TLAST),
     .str_in_1_flush(DMAC_STR_IN_1_FLUSH),
 `endif
-
+`ifdef DMA350_STREAM_3
+    // AXI Stream 1 out
+    .str_out_2_tvalid(DMAC_STR_OUT_2_TVALID),
+    .str_out_2_tready(DMAC_STR_OUT_2_TREADY),
+    .str_out_2_tdata(DMAC_STR_OUT_2_TDATA),
+    .str_out_2_tstrb(DMAC_STR_OUT_2_TSTRB),
+    .str_out_2_tlast(DMAC_STR_OUT_2_TLAST),
+    // AXI Stream 1 in
+    .str_in_2_tvalid(DMAC_STR_IN_2_TVALID),
+    .str_in_2_tready(DMAC_STR_IN_2_TREADY),
+    .str_in_2_tdata(DMAC_STR_IN_2_TDATA),
+    .str_in_2_tstrb(DMAC_STR_IN_2_TSTRB),
+    .str_in_2_tlast(DMAC_STR_IN_2_TLAST),
+    .str_in_2_flush(DMAC_STR_IN_2_FLUSH),
+`endif
     .allch_stop_req_nonsec(1'b0),
     .allch_stop_ack_nonsec(DMAC_ALLCH_STOP_ACK_NONSEC),
     .allch_pause_req_nonsec(1'b0),

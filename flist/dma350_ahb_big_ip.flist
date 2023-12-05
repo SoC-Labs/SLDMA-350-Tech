@@ -69,6 +69,10 @@ $(SOCLABS_SLDMA350_TECH_DIR)/src/logical/ada_channel_0_sldma350/verilog/ada_chan
 $(SOCLABS_SLDMA350_TECH_DIR)/src/logical/ada_channel_0_sldma350/verilog/ada_channel_0_axi_wr_if_sldma350.sv
 $(SOCLABS_SLDMA350_TECH_DIR)/src/logical/ada_channel_0_sldma350/verilog/ada_channel_0_axi_stop_sldma350.sv
 $(SOCLABS_SLDMA350_TECH_DIR)/src/logical/ada_channel_0_sldma350/verilog/ada_channel_0_reg_bank_sldma350.sv
+$(SOCLABS_SLDMA350_TECH_DIR)/src/logical/ada_channel_0_sldma350/verilog/ada_channel_0_stream_wrapper_sldma350.sv
+$(SOCLABS_SLDMA350_TECH_DIR)/src/logical/ada_channel_0_sldma350/verilog/ada_channel_0_stream_slave_sldma350.sv
+$(SOCLABS_SLDMA350_TECH_DIR)/src/logical/ada_channel_0_sldma350/verilog/ada_channel_0_stream_master_sldma350.sv
+$(SOCLABS_SLDMA350_TECH_DIR)/src/logical/ada_channel_0_sldma350/verilog/ada_channel_0_stream_bypass_sldma350.sv
 $(SOCLABS_SLDMA350_TECH_DIR)/src/logical/ada_channel_0_sldma350/verilog/ada_channel_0_trig_in_sldma350.sv
 $(SOCLABS_SLDMA350_TECH_DIR)/src/logical/ada_channel_0_sldma350/verilog/ada_channel_0_trig_out_sldma350.sv
 
@@ -88,6 +92,10 @@ $(SOCLABS_SLDMA350_TECH_DIR)/src/logical/ada_channel_1_sldma350/verilog/ada_chan
 $(SOCLABS_SLDMA350_TECH_DIR)/src/logical/ada_channel_1_sldma350/verilog/ada_channel_1_axi_wr_if_sldma350.sv
 $(SOCLABS_SLDMA350_TECH_DIR)/src/logical/ada_channel_1_sldma350/verilog/ada_channel_1_axi_stop_sldma350.sv
 $(SOCLABS_SLDMA350_TECH_DIR)/src/logical/ada_channel_1_sldma350/verilog/ada_channel_1_reg_bank_sldma350.sv
+$(SOCLABS_SLDMA350_TECH_DIR)/src/logical/ada_channel_1_sldma350/verilog/ada_channel_1_stream_wrapper_sldma350.sv
+$(SOCLABS_SLDMA350_TECH_DIR)/src/logical/ada_channel_1_sldma350/verilog/ada_channel_1_stream_slave_sldma350.sv
+$(SOCLABS_SLDMA350_TECH_DIR)/src/logical/ada_channel_1_sldma350/verilog/ada_channel_1_stream_master_sldma350.sv
+$(SOCLABS_SLDMA350_TECH_DIR)/src/logical/ada_channel_1_sldma350/verilog/ada_channel_1_stream_bypass_sldma350.sv
 $(SOCLABS_SLDMA350_TECH_DIR)/src/logical/ada_channel_1_sldma350/verilog/ada_channel_1_trig_in_sldma350.sv
 $(SOCLABS_SLDMA350_TECH_DIR)/src/logical/ada_channel_1_sldma350/verilog/ada_channel_1_trig_out_sldma350.sv
 
@@ -107,6 +115,10 @@ $(SOCLABS_SLDMA350_TECH_DIR)/src/logical/ada_channel_2_sldma350/verilog/ada_chan
 $(SOCLABS_SLDMA350_TECH_DIR)/src/logical/ada_channel_2_sldma350/verilog/ada_channel_2_axi_wr_if_sldma350.sv
 $(SOCLABS_SLDMA350_TECH_DIR)/src/logical/ada_channel_2_sldma350/verilog/ada_channel_2_axi_stop_sldma350.sv
 $(SOCLABS_SLDMA350_TECH_DIR)/src/logical/ada_channel_2_sldma350/verilog/ada_channel_2_reg_bank_sldma350.sv
+$(SOCLABS_SLDMA350_TECH_DIR)/src/logical/ada_channel_2_sldma350/verilog/ada_channel_2_stream_wrapper_sldma350.sv
+$(SOCLABS_SLDMA350_TECH_DIR)/src/logical/ada_channel_2_sldma350/verilog/ada_channel_2_stream_slave_sldma350.sv
+$(SOCLABS_SLDMA350_TECH_DIR)/src/logical/ada_channel_2_sldma350/verilog/ada_channel_2_stream_master_sldma350.sv
+$(SOCLABS_SLDMA350_TECH_DIR)/src/logical/ada_channel_2_sldma350/verilog/ada_channel_2_stream_bypass_sldma350.sv
 $(SOCLABS_SLDMA350_TECH_DIR)/src/logical/ada_channel_2_sldma350/verilog/ada_channel_2_trig_in_sldma350.sv
 $(SOCLABS_SLDMA350_TECH_DIR)/src/logical/ada_channel_2_sldma350/verilog/ada_channel_2_trig_out_sldma350.sv
 
