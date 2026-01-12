@@ -37,19 +37,37 @@ PROJ_SW_DIR      ?= $(PROJ_SYS_DIR)/testcodes
 SIM_TOP_DIR ?= $(SOCLABS_PROJECT_DIR)/simulate/sim
 SIM_DIR      = $(SIM_TOP_DIR)/$(TESTNAME)
 
-config_dma_axi:
-	@$(ARM_IP_LIBRARY_PATH)/DMA-350/CG096-r0p0-00rel0/CG096-BU-50000-r0p0-00rel0/dma350/logical/generate --config ./config/cfg_dma_axi.yaml --output ./src/
-config_dma_axi_millisoc:
-	@$(ARM_IP_LIBRARY_PATH)/DMA-350/CG096-r0p0-00rel0/CG096-BU-50000-r0p0-00rel0/dma350/logical/generate --config ./config/cfg_dma_axi_millisoc.yaml --output ./src/
-config_dma_ahb:
-	@$(ARM_IP_LIBRARY_PATH)/DMA-350/CG096-r0p0-00rel0/CG096-BU-50000-r0p0-00rel0/dma350/logical/generate --config ./config/cfg_dma_ahb.yaml --output ./src/
-	@$(ARM_IP_LIBRARY_PATH)/DMA-350/CG096-r0p0-00rel0/PL417-BU-50000-r0p1-00rel0/xhb500/logical/generate --config ./config/cfg_xhb_axi_to_ahb.cfg --output ./src/
-config_dma_ahb_small:
-	@$(ARM_IP_LIBRARY_PATH)/DMA-350/CG096-r0p0-00rel0/CG096-BU-50000-r0p0-00rel0/dma350/logical/generate --config ./config/cfg_dma_ahb_small.yaml --output ./src/
-	@$(ARM_IP_LIBRARY_PATH)/DMA-350/CG096-r0p0-00rel0/PL417-BU-50000-r0p1-00rel0/xhb500/logical/generate --config ./config/cfg_xhb_axi_to_ahb.cfg --output ./src/
-config_dma_ahb_big:
-	@$(ARM_IP_LIBRARY_PATH)/DMA-350/CG096-r0p0-00rel0/CG096-BU-50000-r0p0-00rel0/dma350/logical/generate --config ./config/cfg_dma_ahb_big.yaml --output ./src/
-	@$(ARM_IP_LIBRARY_PATH)/DMA-350/CG096-r0p0-00rel0/PL417-BU-50000-r0p1-00rel0/xhb500/logical/generate --config ./config/cfg_xhb_axi_to_ahb_big.cfg --output ./src/
+# Config Directory
+THIS_DIR	 := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
+CONFIG_DIR   := $(THIS_DIR)/config
+
+# Source Directory
+SRC_DIR	     := $(abspath $(THIS_DIR)/src)
+
+#-------------------------------------
+# - DMA-350 Generation Scripts
+#-------------------------------------
+DMA350_GENERATE_SCRIPT := $(ARM_IP_LIBRARY_PATH)/DMA-350/CG096-r0p0-00rel0/CG096-BU-50000-r0p0-00rel0/dma350/logical/generate
+
+#-------------------------------------
+# - XHB500 Generation Scripts
+#-------------------------------------
+XHB500_GENERATE_SCRIPT := $(ARM_IP_LIBRARY_PATH)/DMA-350/CG096-r0p0-00rel0/PL417-BU-50000-r0p1-00rel0/xhb500/logical/generate
+
+#-------------------------------------
+# - DMA-350 IP Configuration Targets
+#-------------------------------------
+config_dma_ahb:          $(SRC_DIR)/dma_ahb          $(SRC_DIR)/xhb_axi_to_ahb
+config_dma_ahb_small:    $(SRC_DIR)/dma_ahb_small    $(SRC_DIR)/xhb_axi_to_ahb
+config_dma_ahb_big:      $(SRC_DIR)/dma_ahb_big      $(SRC_DIR)/xhb_axi_to_ahb_big
+config_dma_axi:          $(SRC_DIR)/dma_axi
+config_dma_axi_millisoc: $(SRC_DIR)/dma_axi_millisoc
+
+$(SRC_DIR)/dma_%: $(CONFIG_DIR)/cfg_dma_%.yaml
+	@$(DMA350_GENERATE_SCRIPT) --config $^ --output $@
+	
+$(SRC_DIR)/xhb_axi_to_%: $(CONFIG_DIR)/cfg_xhb_axi_to_%.cfg
+	@$(XHB500_GENERATE_SCRIPT) --config $^ --output $@
 
 clean_ip:
 	@rm -rf ./src/*
